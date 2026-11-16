@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KioskOS</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#141c30;--panel2:#1b2740;--line:#293752;--text:#f4f7ff;--muted:#9eacc5;--blue:#75a7ff;--green:#67d6a0;--red:#ff8585}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a2a4a 0,#0b1020 55%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+header{max-width:1050px;margin:auto;padding:22px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:22px;font-weight:800;letter-spacing:-.7px}.brand span{color:var(--blue)}
+nav{display:flex;gap:8px;flex-wrap:wrap}.wrap{max-width:1050px;margin:12px auto;padding:0 20px 48px}
+.panel{background:rgba(20,28,48,.94);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 14px 40px #0003}
+.hero{padding:30px;margin-bottom:18px;background:linear-gradient(120deg,#182d50,#172139 65%,#202a43)}
+h1{font-size:clamp(27px,5vw,42px);margin:0 0 8px;letter-spacing:-1.3px}h2{font-size:20px;margin:0 0 14px}h3{font-size:16px;margin:0 0 8px}
+p{color:var(--muted);line-height:1.5}.muted,.small{color:var(--muted)}.small{font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.tile{width:100%;text-align:left;min-height:130px;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;color:var(--text)}
+.tile:hover{border-color:var(--blue);transform:translateY(-1px)}.tile .emoji{font-size:25px;display:block;margin-bottom:12px}.tile strong{font-size:17px}
+button,.button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:11px;font:inherit;cursor:pointer}
+button.primary{background:var(--blue);border-color:var(--blue);color:#091326;font-weight:700}
+button.danger{color:#ffb4b4;border-color:#70404a}button:disabled{opacity:.45;cursor:not-allowed}
+input,textarea,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0c1426;color:var(--text);font:inherit;margin:6px 0 13px}
+textarea{min-height:105px;resize:vertical}label{font-size:13px;color:#c6d2e7}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.hidden{display:none!important}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tabs button.active{border-color:var(--blue);color:var(--blue)}
+.item{border:1px solid var(--line);background:#10192b;border-radius:13px;padding:14px;margin:10px 0}
+.status{display:inline-block;border-radius:30px;padding:4px 9px;background:#26344d;color:#c9d8f4;font-size:11px}
+.status.approved{background:#173c32;color:#9af0c5}.status.rejected{background:#45252d;color:#ffb4b4}
+.stat{font-size:27px;font-weight:800}.statbox{background:#10192b;border:1px solid var(--line);padding:14px;border-radius:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:22px}
+@media(max-width:560px){header{align-items:flex-start;flex-direction:column}.wrap{padding-left:14px;padding-right:14px}.panel{padding:16px}.hero{padding:22px}}
+</style>
+</head>
+<body>
+<header><div class="brand">Kiosk<span>OS</span></div><nav><button id="homeNav" onclick="showPage('home')">Home</button><button onclick="showPage('admin')">Admin dashboard</button></nav></header>
+<main class="wrap">
+<section id="homePage">
+ <div class="panel hero"><div class="small">WELCOME</div><h1>How can we help?</h1><p>Send a message, ask a question, or request an item. Your requests will appear in the KioskOS dashboard on this browser.</p></div>
+ <div class="grid">
+  <button class="tile" onclick="showPage('mail')"><span class="emoji">✉️</span><strong>Mail</strong><p>Send a message to the administrator.</p></button>
+  <button class="tile" onclick="showPage('inquiry')"><span class="emoji">💬</span><strong>Make an inquiry</strong><p>Ask about a product or service.</p></button>
+  <button class="tile" onclick="showPage('purchase')"><span class="emoji">🛍️</span><strong>Purchase request</strong><p>Request something from the price list.</p></button>
+  <button class="tile" onclick="showPage('replies')"><span class="emoji">📬</span><strong>My replies</strong><p>Check answers from the administrator.</p></button>
+ </div>
+</section>
+<section id="mailPage" class="panel hidden"><button onclick="showPage('home')">← Back</button><h2 style="margin-top:16px">Send mail</h2><form onsubmit="submitRequest(event,'Mail')"><label>Your name</label><input name="name" required maxlength="70"><label>Your email (optional)</label><input name="email" type="email" maxlength="120"><label>Subject</label><input name="subject" required maxlength="100"><label>Message</label><textarea name="message" required maxlength="2000"></textarea><button class="primary">Send message</button></form></section>
+<section id="inquiryPage" class="panel hidden"><button onclick="showPage('home')">← Back</button><h2 style="margin-top:16px">Make an inquiry</h2><form onsubmit="submitRequest(event,'Inquiry')"><label>Your name</label><input name="name" required maxlength="70"><label>What is your question about?</label><input name="subject" required maxlength="100"><label>Details</label><textarea name="message" required maxlength="2000"></textarea><button class="primary">Send inquiry</button></form></section>
+<section id="purchasePage" class="panel hidden"><button onclick="showPage('home')">← Back</button><h2 style="margin-top:16px">Purchase request</h2><p>Send a request to the administrator. This demo does not take payments.</p><form onsubmit="submitRequest(event,'Purchase')"><label>Your name</label><input name="name" required maxlength="70"><label>Item requested</label><input name="subject" id="purchaseItem" required maxlength="100" placeholder="Item name"><label>Quantity</label><input name="quantity" type="number" min="1" max="99" value="1" required><label>Notes (optional)</label><textarea name="message" maxlength="1000"></textarea><button class="primary">Submit request</button></form></section>
+<section id="repliesPage" class="panel hidden"><button onclick="showPage('home')">← Back</button><h2 style="margin-top:16px">My replies</h2><p>Enter the email address you used when sending your request.</p><label>Email address</label><input id="replyEmail" type="email" placeholder="you@example.com"><button class="primary" onclick="lookupReplies()">Find replies</button><div id="replyResults"></div></section>
+<section id="adminPage" class="hidden">
+ <div id="setupPanel" class="panel hidden"><h2>Set up your admin password</h2><p>Create a password for this browser's KioskOS dashboard. Choose something unique.</p><form onsubmit="setupPassword(event)"><label>New password (at least 8 characters)</label><input id="newPassword" type="password" minlength="8" required autocomplete="new-password"><label>Confirm password</label><input id="confirmPassword" type="password" minlength="8" required autocomplete="new-password"><button class="primary">Create admin password</button></form></div>
+ <div id="loginPanel" class="panel hidden"><h2>Admin login</h2><form onsubmit="login(event)"><label>Password</label><input id="adminPassword" type="password" required autocomplete="current-password"><button class="primary">Log in</button></form><p id="loginError" class="small"></p></div>
+ <div id="dashboard" class="hidden">
+  <div class="row" style="margin-bottom:14px"><div><h1 style="font-size:29px">Admin dashboard</h1><p>Manage requests, replies and your saved price list.</p></div><button onclick="logout()">Log out</button></div>
+  <div class="grid" style="margin-bottom:16px"><div class="statbox"><div class="stat" id="totalStat">0</div><div class="small">Total requests</div></div><div class="statbox"><div class="stat" id="openStat">0</div><div class="small">Awaiting reply</div></div><div class="statbox"><div class="stat" id="priceStat">0</div><div class="small">Saved prices</div></div></div>
+  <div class="tabs"><button class="active" data-tab="requests" onclick="adminTab('requests')">Requests</button><button data-tab="prices" onclick="adminTab('prices')">Price book</button><button data-tab="settings" onclick="adminTab('settings')">Data & settings</button></div>
+  <div id="requestsTab" class="panel"><h2>Incoming requests</h2><div id="requestList"></div></div>
+  <div id="pricesTab" class="panel hidden"><h2>Saved price book</h2><p>Add prices you look up. They are saved in this browser's local storage.</p><form onsubmit="addPrice(event)"><label>Item / product</label><input name="item" required maxlength="100"><label>Price</label><input name="price" required maxlength="40" placeholder="$19.99"><label>Where you found it (optional)</label><input name="source" maxlength="120"><button class="primary">Save price</button></form><div id="priceList"></div></div>
+  <div id="settingsTab" class="panel hidden"><h2>Data & settings</h2><p>Export a backup of requests and prices, or import a previous KioskOS backup.</p><div class="actions"><button onclick="exportData()">Export backup</button><label class="button">Import backup<input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)"></label></div><hr style="border-color:var(--line);margin:20px 0"><h3>Change admin password</h3><form onsubmit="changePassword(event)"><label>Current password</label><input id="oldPass" type="password" required><label>New password</label><input id="newPass2" type="password" minlength="8" required><button class="primary">Change password</button></form><p class="small">Security note: this is a browser-only demo. A localStorage password is not secure against someone with access to the browser or its developer tools.</p></div>
+ </div>
+</section>
+</main><footer>KioskOS · Website prototype · Data stays in this browser</footer>
+<script>
+const $=id=>document.getElementById(id);
+const get=(key,def=[])=>{try{return JSON.parse(localStorage.getItem('kiosk_'+key))??def}catch{return def}};
+const put=(key,val)=>localStorage.setItem('kiosk_'+key,JSON.stringify(val));
+let isAdmin=false;
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function showPage(page){['home','mail','inquiry','purchase','replies','admin'].forEach(p=>$(p+'Page').classList.toggle('hidden',p!==page));if(page==='admin')adminGate();window.scrollTo(0,0)}
+function submitRequest(e,type){e.preventDefault();const f=new FormData(e.target);const reqs=get('requests');reqs.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),type,name:f.get('name'),email:f.get('email')||'',subject:f.get('subject'),message:f.get('message')||'',quantity:f.get('quantity')||'1',created:new Date().toISOString(),status:'New',reply:''});put('requests',reqs);e.target.reset();alert('Request submitted on this browser.');showPage('home')}
+async function adminGate(){isAdmin=false;$('setupPanel').classList.add('hidden');$('loginPanel').classList.add('hidden');$('dashboard').classList.add('hidden');if(!localStorage.getItem('kiosk_password_hash'))$('setupPanel').classList.remove('hidden');else $('loginPanel').classList.remove('hidden')}
+async function setupPassword(e){e.preventDefault();let a=$('newPassword').value,b=$('confirmPassword').value;if(a.length<8||a!==b){alert('Make sure both passwords match and are at least 8 characters.');return}localStorage.setItem('kiosk_password_hash',await hash(a));alert('Admin password created. Log in now.');$('newPassword').value='';$('confirmPassword').value='';adminGate()}
+async function login(e){e.preventDefault();if(await hash($('adminPassword').value)===localStorage.getItem('kiosk_password_hash')){isAdmin=true;$('loginPanel').classList.add('hidden');$('dashboard').classList.remove('hidden');$('adminPassword').value='';renderAdmin()}else $('loginError').textContent='Incorrect password. Try again.'}
+function logout(){isAdmin=false;adminGate()}
+function adminTab(tab){['requests','prices','settings'].forEach(t=>{$(t+'Tab').classList.toggle('hidden',t!==tab);document.querySelector('[data-tab="'+t+'"]').classList.toggle('active',t===tab)})}
+function renderAdmin(){if(!isAdmin)return;let r=get('requests'),p=get('prices');$('totalStat').textContent=r.length;$('openStat').textContent=r.filter(x=>!x.reply).length;$('priceStat').textContent=p.length;
+$('requestList').innerHTML=r.length?r.map(x=>`<article class="item"><div class="row"><strong>${esc(x.type)} · ${esc(x.subject)}</strong><span class="status ${x.status==='Approved'?'approved':x.status==='Rejected'?'rejected':''}">${esc(x.status)}</span></div><p>${esc(x.name)}${x.email?' · '+esc(x.email):''} · ${new Date(x.created).toLocaleString()}</p>${x.type==='Purchase'?`<p>Quantity: ${esc(x.quantity)}</p>`:''}<p style="white-space:pre-wrap">${esc(x.message)}</p><label>Reply to customer</label><textarea id="reply-${x.id}" placeholder="Write your answer...">${esc(x.reply||'')}</textarea><div class="actions"><button class="primary" onclick="saveReply('${x.id}')">Save reply</button><button onclick="setStatus('${x.id}','Approved')">Approve</button><button onclick="setStatus('${x.id}','Rejected')">Reject</button><button class="danger" onclick="deleteRequest('${x.id}')">Delete</button></div></article>`).join(''):'<p>No requests yet.</p>';
+$('priceList').innerHTML=p.length?p.map(x=>`<div class="item row"><div><strong>${esc(x.item)}</strong><div>${esc(x.price)} <span class="small">${esc(x.source||'')}</span></div></div><button class="danger" onclick="deletePrice('${x.id}')">Delete</button></div>`).join(''):'<p>No saved prices yet.</p>'}
+function saveReply(id){let r=get('requests'),x=r.find(a=>a.id===id);if(!x)return;x.reply=$('reply-'+id).value;x.replied=new Date().toISOString();if(x.reply)x.status='Replied';put('requests',r);renderAdmin()}
+function setStatus(id,status){let r=get('requests'),x=r.find(a=>a.id===id);if(x)x.status=status;put('requests',r);renderAdmin()}
+function deleteRequest(id){if(confirm('Delete this request?')){put('requests',get('requests').filter(x=>x.id!==id));renderAdmin()}}
+function addPrice(e){e.preventDefault();let f=new FormData(e.target),p=get('prices');p.unshift({id:Date.now().toString(36),item:f.get('item'),price:f.get('price'),source:f.get('source')});put('prices',p);e.target.reset();renderAdmin()}
+function deletePrice(id){put('prices',get('prices').filter(x=>x.id!==id));renderAdmin()}
+function lookupReplies(){let email=$('replyEmail').value.trim().toLowerCase();let found=get('requests').filter(x=>email&&x.email.toLowerCase()===email);$('replyResults').innerHTML=found.length?found.map(x=>`<div class="item"><strong>${esc(x.subject)}</strong><p>${esc(x.type)} · ${new Date(x.created).toLocaleDateString()} · ${esc(x.status)}</p>${x.reply?`<p><strong>Admin reply:</strong><br>${esc(x.reply)}</p>`:'<p>Waiting for a reply.</p>'}</div>`).join(''):'<p>No requests found for that email address. Mail requests need an email address to be searchable here.</p>'}
+async function changePassword(e){e.preventDefault();if(await hash($('oldPass').value)!==localStorage.getItem('kiosk_password_hash')){alert('Current password is incorrect.');return}if($('newPass2').value.length<8){alert('New password must be at least 8 characters.');return}localStorage.setItem('kiosk_password_hash',await hash($('newPass2').value));e.target.reset();alert('Password changed.')}
+function exportData(){let data={requests:get('requests'),prices:get('prices'),exported:new Date().toISOString()};let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.href=u;a.download='kioskos-backup.json';a.click();URL.revokeObjectURL(u)}
+function importData(e){let file=e.target.files[0];if(!file)return;let rd=new FileReader();rd.onload=()=>{try{let d=JSON.parse(rd.result);if(!Array.isArray(d.requests)||!Array.isArray(d.prices))throw Error();put('requests',d.requests);put('prices',d.prices);renderAdmin();alert('Backup imported.')}catch{alert('That backup file is not valid.')}};rd.readAsText(file)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+</script>
+</body></html>
